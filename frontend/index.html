@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Daily habits, streaks, water reminders, focus sessions and a must-do list — saved in your browser, no backend.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3f6f6">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0d1518">
+  <title>Daily tracker</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%230f766e'/%3E%3Cpath d='M7 12.6l3.3 3.3L17.4 8.8' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <h1>Daily tracker</h1>
+        <p id="todayLabel" class="today-label"></p>
+      </div>
+      <div id="themePicker" class="theme-picker" role="radiogroup" aria-label="Accent colour"></div>
+    </div>
+  </header>
+
+  <main class="layout">
+
+    <section class="card" aria-labelledby="habitsHeading">
+      <h2 id="habitsHeading">Daily habits</h2>
+      <ul id="habitList" class="habit-list"></ul>
+      <form id="habitForm" class="habit-form" novalidate>
+        <label class="sr-only" for="habitName">New habit</label>
+        <input id="habitName" class="input habit-name-input" type="text" placeholder="Add a habit, e.g. Read 20 pages" autocomplete="off" enterkeyhint="done" maxlength="80">
+        <button class="btn btn-primary" type="submit">Add habit</button>
+      </form>
+      <div class="habit-progress">
+        <div class="progress-track" aria-hidden="true"><div id="habitProgressBar" class="progress-fill"></div></div>
+        <p id="habitProgressText" class="small muted"></p>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="streaksHeading">
+      <h2 id="streaksHeading">Streaks</h2>
+      <div class="stats">
+        <div class="stat"><span id="overallStreak" class="num">0</span><span class="stat-label">Overall streak</span></div>
+        <div class="stat"><span id="bestStreak" class="num">0</span><span class="stat-label">Best streak</span></div>
+        <div class="stat"><span id="todayDone" class="num">0/5</span><span class="stat-label">Done today</span></div>
+      </div>
+      <div id="streakGrid" class="grid14" aria-label="Habit completion over the last 14 days — one row per habit, plus a row for days when all habits were done"></div>
+    </section>
+
+    <section class="card" aria-labelledby="waterHeading">
+      <h2 id="waterHeading">Water tracker</h2>
+      <p class="water-count" aria-live="polite">
+        <span id="waterCount" class="num water-count-num">0</span>
+        <span id="waterGoalText" class="num water-count-goal">/ 8</span>
+        <span class="water-count-label">glasses today</span>
+      </p>
+      <p id="waterGoalReached" class="goal-reached" hidden>Daily goal reached — nicely done.</p>
+      <div id="droplets" class="droplets" role="img" aria-label="Glasses of water today"></div>
+      <div class="button-row">
+        <button id="drankButton" class="btn btn-water" type="button">I drank a glass</button>
+        <button id="undoButton" class="btn btn-secondary" type="button" disabled>Undo</button>
+      </div>
+      <div class="goal-row">
+        <span id="goalLabel" class="field-label">Daily goal</span>
+        <div class="stepper" aria-labelledby="goalLabel">
+          <button id="goalMinus" class="icon-btn" type="button" aria-label="Decrease daily goal by one">−</button>
+          <input id="goalInput" class="goal-input" type="number" min="1" max="30" step="1" value="8" aria-label="Daily water goal in glasses">
+          <button id="goalPlus" class="icon-btn" type="button" aria-label="Increase daily goal by one">+</button>
+        </div>
+      </div>
+      <div class="divider" role="presentation"></div>
+      <p id="intervalLabel" class="field-label">Reminder interval</p>
+      <div id="intervalGroup" class="pill-group" role="radiogroup" aria-labelledby="intervalLabel"></div>
+      <div class="button-row">
+        <button id="reminderToggle" class="btn btn-water" type="button">Turn reminders on</button>
+        <button id="testReminder" class="btn btn-secondary" type="button">Test reminder</button>
+      </div>
+      <p class="status-line" aria-live="polite"><span id="statusDot" class="status-dot"></span><span id="statusText">Reminders are off.</span></p>
+      <p id="reminderHint" class="hint-line" hidden>To get browser notifications, click the padlock icon at the left end of the address bar → Notifications → Allow. Then turn reminders off and on.</p>
+    </section>
+
+    <section class="card" aria-labelledby="focusHeading">
+      <h2 id="focusHeading">Focus session</h2>
+      <div class="focus-ring-wrap">
+        <svg viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+          <circle class="ring-track" cx="60" cy="60" r="52"></circle>
+          <circle id="focusRing" class="ring-fill" cx="60" cy="60" r="52"></circle>
+        </svg>
+        <span id="focusTime" class="focus-time" role="timer">25:00</span>
+      </div>
+      <p id="durationLabel" class="field-label center">Session length</p>
+      <div id="durationGroup" class="pill-group center" role="radiogroup" aria-labelledby="durationLabel"></div>
+      <div class="button-row center">
+        <button id="focusStartPause" class="btn btn-primary" type="button">Start</button>
+        <button id="focusReset" class="btn btn-secondary" type="button" disabled>Reset</button>
+      </div>
+      <p class="focus-today">Focus time today: <span id="focusToday" class="num">0</span> min</p>
+    </section>
+
+    <section class="card card-wide" aria-labelledby="todosHeading">
+      <h2 id="todosHeading">Must-do list <span id="todoCount" class="todo-count"></span></h2>
+      <form id="todoForm" class="todo-form" novalidate>
+        <label class="sr-only" for="todoText">Task</label>
+        <input id="todoText" class="input todo-text" type="text" placeholder="Add a task, e.g. Finish lab report" autocomplete="off" enterkeyhint="done" maxlength="200">
+        <label class="sr-only" for="todoDate">Due date (optional)</label>
+        <input id="todoDate" class="input todo-date" type="date">
+        <label class="pill" title="Repeats every day — it will be added to the Daily habits card"><input type="checkbox" id="todoDailyToggle"><span>Daily</span></label>
+        <button id="todoAddButton" class="btn btn-primary" type="submit">Add task</button>
+      </form>
+      <ul id="todoList" class="todo-list"></ul>
+      <p id="todoEmpty" class="empty-state" hidden>No tasks yet — add your first one above.</p>
+    </section>
+
+  </main>
+
+  <footer class="footer">Data stored locally on your device — no account, no server.</footer>
+
+  <div id="banner" class="banner" inert aria-live="polite">
+    <div class="banner-inner">
+      <div class="banner-text">
+        <strong id="bannerTitle"></strong>
+        <span id="bannerMessage"></span>
+      </div>
+      <div class="banner-actions">
+        <button id="bannerAction" class="btn btn-water btn-small" type="button" hidden></button>
+        <button id="bannerClose" class="icon-btn" type="button" aria-label="Dismiss reminder">×</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="bootError" class="boot-error" hidden>
+    <p><strong>Error:</strong> Unknown error occurred.</p>
+  </div>
+
+  <script>
+    // Tauri injects its API automatically when running as a native app
+    window.addEventListener('error', function (event) {
+      const el = document.getElementById('bootError');
+      if (el && !window.__dailyTrackerBooted) {
+        el.hidden = false;
+        el.querySelector('p').innerHTML = '<strong>Error:</strong> ' + (event.error ? event.error.message : event.message);
+      }
+    });
+    window.addEventListener('unhandledrejection', function (event) {
+      const el = document.getElementById('bootError');
+      if (el && !window.__dailyTrackerBooted) {
+        el.hidden = false;
+        el.querySelector('p').innerHTML = '<strong>Promise error:</strong> ' + (event.reason ? event.reason.message || event.reason : 'unknown');
+      }
+    });
+    if (!window.__TAURI__) {
+      console.warn('Running outside Tauri — some features may not work');
+    }
+  </script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+# Rust / Tauri build artifacts
+src-tauri/target/
+src-tauri/gen/schemas/
+
+# Node
+node_modules/
+
+# OS junk
+Thumbs.db
+.DS_Store
+
+# Local logs
+*.log
+launcher-error.log
+/Daily tracker.exe
